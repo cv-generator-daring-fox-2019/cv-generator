@@ -35,12 +35,7 @@ let userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: [true, 'Password is required.'],
-  },
-  role: String,
-  carts: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Item'
-  }]
+  }
 })
 
 let User = mongoose.model('User', userSchema)
