@@ -1,3 +1,4 @@
+const baseUrl = 'http://localhost:3000'
 const vue = new Vue({
   el: '#app',
   data: {
@@ -14,6 +15,12 @@ const vue = new Vue({
       email : '',
       password : ''
     },
+    regisForm : {
+      firstName : '',
+      lastName : '',
+      email : '',
+      password : ''
+    },
     file: '',
     homePage : true,
     isLogin : false,
@@ -24,9 +31,7 @@ const vue = new Vue({
   methods: {
     generateCV() {
       this.finishUpload = false
-      // console.log(this.file)
       let formData = new FormData()
-      // console.log()
       formData.append('image', this.file)
       formData.append('fullName', this.input.name)
       formData.append('workExp', this.input.workExp)
@@ -35,10 +40,10 @@ const vue = new Vue({
       formData.append('project' , this.input.project)
       formData.append('hobby', this.input.hobbies)
       formData.append('email', this.input.email)
-
+      // console.
       axios({
         method: 'post',
-        url: 'http://localhost:3000/upload',
+        url: `${baseUrl}/upload`,
         data: formData
       })
         .then(({ data }) => {
@@ -58,7 +63,7 @@ const vue = new Vue({
       doc.text(90, 95, this.input.academic)
       doc.text(90, 157, this.input.skill)
       doc.text(90, 215, this.input.project)
-      doc.text(90, 270, this.input.hobby)
+      doc.text(90, 270, this.input.hobbies)
       doc.setTextColor('#FFFFFF')
       doc.text(25, 225, this.input.email)
       doc.text(7, 165, this.input.name)
@@ -66,6 +71,35 @@ const vue = new Vue({
       this.isLoading = false
       this.finishUpload = true
       console.log({ file: this.file })
+    },
+    registerUser(){
+      axios({
+        method: 'post',
+        url : `${baseUrl}/register`,
+        data : {
+          firstName : this.regisForm.firstName,
+          lastName : this.regisForm.lastName,
+          email : this.regisForm.email,
+          password : this.regisForm.password
+        }
+      })
+      .then(response =>{
+        Swal.fire({
+          position: 'center',
+          type: 'success',
+          title: 'Register succesfully',
+          showConfirmButton: false,
+          timer: 1500
+        })
+      })
+      .catch(err =>{
+        Swal.fire({
+          type: 'error',
+          title: 'Oops...',
+          text: 'Email has been used!',
+          footer: 'Change your email address!'
+        })
+      })
     },
     loginUser(input) {
       // console.log(input);
@@ -76,6 +110,7 @@ const vue = new Vue({
           password : input.password
         })
           .then(({data}) => {
+            
             localStorage.setItem('token', data.token)
             localStorage.setItem('email', data.email)
             localStorage.setItem('image', data.image)
@@ -84,7 +119,7 @@ const vue = new Vue({
             this.isLogin = true
           })
           .catch(err => {
-            console.log(err)
+            console.log(err.message)
           })
       }
     },
@@ -92,6 +127,7 @@ const vue = new Vue({
       if(localStorage.token){
         console.log('ada local')
           this.isLogin = true
+          this.homePage = false
       }else if(!localStorage.token){
         this.homePage = true
         this.isLogin = false

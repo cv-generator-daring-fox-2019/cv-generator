@@ -8,7 +8,7 @@ class CvController{
                 workExp: req.body.workExp,
                 project: req.body.skill,
                 academic : req.body.academic,
-                hobby: req.body.skill,
+                hobby: req.body.hobby,
                 skill: req.body.skill,
                 url: req.file.cloudStoragePublicUrl
             })

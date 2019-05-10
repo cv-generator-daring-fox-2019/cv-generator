@@ -6,10 +6,11 @@ const { User } = require('../models')
 class ControllerUser {
   static create(req, res) {
     let input = req.body
+    let hashed = hash(input.password)
     let newUser = {
-      name : `${req.body.firstName} ${req.body.lastName}`,
-      email : req.body.email,
-      password : req.body.password
+      name : `${input.firstName} ${input.lastName}`,
+      email : input.email,
+      password : hashed
     }
     User.create(newUser)
       .then(data => {
@@ -51,7 +52,6 @@ class ControllerUser {
   }
 
   static login(req, res) {
-    console.log(req.body);
     let { email, password } = req.body
     User.findOne({ email: req.body.email })
       .then(user => {

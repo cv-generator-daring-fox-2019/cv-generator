@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken')
 
 module.exports = {
   sign: function (payload) {
+    console.log
     return jwt.sign(payload, process.env.JWT_SECRET, {
       expiresIn: '2h'
     })
