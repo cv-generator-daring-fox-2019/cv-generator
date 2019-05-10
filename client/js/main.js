@@ -5,20 +5,31 @@ const vue = new Vue({
       name: '',
       workExp: '',
       academic: '',
-      skills: '',
-      prokect: '',
+      skill: '',
+      project: '',
       hobbies: '',
-      contact: '',
+      email: '',
     },
     file: '',
     isLogin : false,
     signinPage : false,
+    isLoading : false,
+    finishUpload: false
   },
   methods: {
     generateCV() {
+      this.finishUpload = false
       console.log(this.file)
       let formData = new FormData()
       formData.append('image', this.file)
+      formData.append('fullName', this.input.name)
+      formData.append('workExp', this.input.workExp)
+      formData.append('academic' , this.input.academic)
+      formData.append('skill' , this.input.skill)
+      formData.append('project' , this.input.project)
+      formData.append('hobby', this.input.hobbies)
+      formData.append('email', this.input.email)
+
       axios({
         method: 'post',
         url: 'http://localhost:3000/upload',
@@ -38,18 +49,25 @@ const vue = new Vue({
       doc.addImage(imgData, 'JPEG', 0, 0, 210, 297)
       doc.addImage(input, 'JPEG', 10, 60, 65, 90)
       doc.setFontSize(25)
-      doc.text(90, 40, 'Work Experience')
-      doc.text(90, 95, 'Academic History')
-      doc.text(90, 157, 'Technical Skills')
-      doc.text(90, 215, 'Finished Projects')
-      doc.text(90, 270, 'Hobbies')
+      doc.text(90, 40, this.input.workExp)
+      doc.text(90, 95, this.input.academic)
+      doc.text(90, 157, this.input.skill)
+      doc.text(90, 215, this.input.project)
+      doc.text(90, 270, this.input.hobby)
       doc.setTextColor('#FFFFFF')
-      doc.text(25, 225, 'Contacts')
-      doc.text(7, 165, 'Muhammad Yusuf')
+      doc.text(25, 225, this.input.email)
+      doc.text(7, 165, this.input.name)
       // doc.save('CV-generator.pdf')
       this.file = doc.output('blob')
+      this.isLoading = false
+      this.finishUpload = true
       console.log({ file: this.file })
     },
+    generate(){
+      console.log('masuk');
+      console.log(this.input);
+      
+    }
   },
   created(){
     if(this.signinPage){
@@ -60,6 +78,7 @@ const vue = new Vue({
 
 
 function encodeImageFileAsURL(element) {
+  this.isLoading = true
   var file = element.files[0];
   vue.file = event.target.files[0];
   console.log("masuk file upload", vue.file)

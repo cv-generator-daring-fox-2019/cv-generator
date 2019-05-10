@@ -44,6 +44,10 @@ class ControllerUser {
       })
       .catch(err => {res.status(500).json({message: err.message})})
   }
+
+  static login(req,res){
+
+  }
 }
 
 module.exports = ControllerUser
