@@ -6,6 +6,7 @@ const { User } = require('../models')
 class ControllerUser {
   static create(req, res) {
     let input = req.body
+    console.log(input)
     let hashed = hash(input.password)
     let newUser = {
       name : req.body.name,
@@ -67,6 +68,7 @@ class ControllerUser {
             let token = sign(obj)
             res.status(201).json({
               token,
+              name: user.name,
               id: user._id,
               email
             })

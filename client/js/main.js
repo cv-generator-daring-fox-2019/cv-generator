@@ -32,8 +32,10 @@ const vue = new Vue({
     isLogin: false,
     isLoading: false,
     finishUpload: false,
-    myCVs: []
+    myCVs: [],
+    username : ''
   },
+
   methods: {
     generateCV() {
       this.finishUpload = false
