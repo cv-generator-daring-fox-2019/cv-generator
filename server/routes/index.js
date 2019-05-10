@@ -1,3 +1,4 @@
+const images = require('../middlewares/images')
 const route = require('express').Router()
 const {ControllerUser,ControllerCv} = require('../controllers')
 
@@ -11,6 +12,8 @@ route.get('/users/:id', ControllerUser.findOne)
 route.put('/users/:id', ControllerUser.update)
 route.delete('/users/:id', ControllerUser.delete)
 
+
+route.post('/upload', images.multer.single('image'), images.sendUploadToGCS,  ControllerCv.create)
 
 
 route.use('/*', (req, res) => res.status(404).json({error: 'Not Found :('}))

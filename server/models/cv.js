@@ -8,7 +8,7 @@ let cvSchema = new Schema({
     email: String,
     workExp: String,
     project: String,
-    edBack: String,
+    academic: String,
     hobby: String,
     skill: String,
     url : String,

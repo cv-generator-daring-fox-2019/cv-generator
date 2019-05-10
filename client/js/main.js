@@ -19,8 +19,9 @@ const vue = new Vue({
   methods: {
     generateCV() {
       this.finishUpload = false
-      console.log(this.file)
+      // console.log(this.file)
       let formData = new FormData()
+      // console.log()
       formData.append('image', this.file)
       formData.append('fullName', this.input.name)
       formData.append('workExp', this.input.workExp)
@@ -57,7 +58,6 @@ const vue = new Vue({
       doc.setTextColor('#FFFFFF')
       doc.text(25, 225, this.input.email)
       doc.text(7, 165, this.input.name)
-      // doc.save('CV-generator.pdf')
       this.file = doc.output('blob')
       this.isLoading = false
       this.finishUpload = true
@@ -81,10 +81,8 @@ function encodeImageFileAsURL(element) {
   this.isLoading = true
   var file = element.files[0];
   vue.file = event.target.files[0];
-  console.log("masuk file upload", vue.file)
   var reader = new FileReader();
   reader.onloadend = function () {
-    // console.log('RESULT', reader.result)
     vue.genPDF(reader.result)
   }
   reader.readAsDataURL(file);
