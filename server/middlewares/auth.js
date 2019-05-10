@@ -10,7 +10,7 @@ module.exports = {
       let decoded = verify(token, res);
       User
        .findOne({
-         email: decoded.email
+         _id: decoded.id
        })
        .then(user => {
          if(user) {

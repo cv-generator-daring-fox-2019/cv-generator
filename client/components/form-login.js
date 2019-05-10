@@ -17,7 +17,7 @@ Vue.component('form-login',{
       <div class="col d-flex justify-content-center"  style="margin-top:50px">
           <div class="card-transparant">
             <h2 style="color: white; font-family: 'Quicksand';text-align:center">Login Here</h2>
-            <div class="text-justify p-3 card-block special-card" style="background-color: rgba(235, 221, 221,0.9); width: 400px; color: white">
+            <div class="text-justify p-3 card-block special-card" style="background-color: rgba(235, 221, 221, 0.9); width: 400px; color: black">
                 <form v-on:submit.prevent="login">
                     <div class="form-group">
                       <label for="Email">Email address</label>
