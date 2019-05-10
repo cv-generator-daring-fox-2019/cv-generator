@@ -7,9 +7,9 @@ class ControllerUser {
   static create(req, res) {
     let input = req.body
     let newUser = {
-      name : `${req.body.firstName} ${req.body.lastName}`,
+      name : req.body.name,
       email : req.body.email,
-      password : req.body.password
+      password : hash(req.body.password)
     }
     User.create(newUser)
       .then(data => {

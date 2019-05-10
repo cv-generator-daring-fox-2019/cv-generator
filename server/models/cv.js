@@ -12,7 +12,10 @@ let cvSchema = new Schema({
     hobby: String,
     skill: String,
     url : String,
-    UserId : String,
+    userId : {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+    },
     created_at: {
         type : Date,
         default : new Date

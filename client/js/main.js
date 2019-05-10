@@ -1,6 +1,8 @@
+const baseUrl = 'http://localhost:3000'
 const vue = new Vue({
   el: '#app',
   data: {
+    page: '',
     input: {
       name: '',
       workExp: '',
@@ -10,16 +12,21 @@ const vue = new Vue({
       hobbies: '',
       email: '',
     },
-    loginForm : {
-      email : '',
-      password : ''
+    loginForm: {
+      email: '',
+      password: ''
+    },
+    registerForm: {
+      firstName: '',
+      lastName: '',
+      email: '',
+      password: ''
     },
     file: '',
-    homePage : true,
-    isLogin : false,
-    signinPage : false,
-    isLoading : false,
-    finishUpload: false
+    isLogin: false,
+    isLoading: false,
+    finishUpload: false,
+    myCVs: []
   },
   methods: {
     generateCV() {
@@ -30,18 +37,23 @@ const vue = new Vue({
       formData.append('image', this.file)
       formData.append('fullName', this.input.name)
       formData.append('workExp', this.input.workExp)
-      formData.append('academic' , this.input.academic)
-      formData.append('skill' , this.input.skill)
-      formData.append('project' , this.input.project)
+      formData.append('academic', this.input.academic)
+      formData.append('skill', this.input.skill)
+      formData.append('project', this.input.project)
       formData.append('hobby', this.input.hobbies)
       formData.append('email', this.input.email)
 
       axios({
         method: 'post',
         url: 'http://localhost:3000/upload',
-        data: formData
+        data: formData,
+        headers: {
+          token: localStorage.token
+        }
       })
         .then(({ data }) => {
+          swal('CV Created!', ' ', 'success')
+          this.getMyCVs()
           console.log({ data })
         })
         .catch(err => {
@@ -58,9 +70,9 @@ const vue = new Vue({
       doc.text(90, 95, this.input.academic)
       doc.text(90, 157, this.input.skill)
       doc.text(90, 215, this.input.project)
-      doc.text(90, 270, this.input.hobby)
+      doc.text(90, 270, this.input.hobbies)
       doc.setTextColor('#FFFFFF')
-      doc.text(25, 225, this.input.email)
+      doc.text(10, 225, this.input.email)
       doc.text(7, 165, this.input.name)
       this.file = doc.output('blob')
       this.isLoading = false
@@ -69,35 +81,125 @@ const vue = new Vue({
     },
     loginUser(input) {
       // console.log(input);
-        this.signinPage = false
-        // v-on:click="signinPage=false"
-        axios.post(baseUrl + '/login',{
-          email : input.email,
-          password : input.password
+      this.page = 'login'
+      axios.post(baseUrl + '/login', {
+        email: input.email,
+        password: input.password
+      })
+        .then(({ data }) => {
+          this.successLogin(data)
         })
-          .then(({data}) => {
-            localStorage.setItem('token', data.token)
-            localStorage.setItem('email', data.email)
-            localStorage.setItem('image', data.image)
-            this.currentEmail = localStorage.getItem('email')
-            this.currentImage = localStorage.getItem('image')
-            this.isLogin = true
+        .catch(err => {
+          swal(err.message)
+          console.log({err})
+        })
+    },
+    register() {
+      console.log(this.registerForm)
+      let { name, email, password } = this.registerForm
+      name = `${this.registerForm.firstName} ${this.registerForm.lastName}`
+      console.log({name})
+      axios.post(baseUrl + '/register', { name, email, password })
+        .then(({ data }) => {
+          // this.successLogin(data)
+          this.registerForm = {
+            firstName: '',
+            lastName: '',
+            email: '',
+            password: ''
+          }
+          swal('Registered!', '👋🏻', 'success')
+        })
+        .catch(err => {
+          console.log({ err })
+          swal(err.message)
+        })
+    },
+    emptyLocalStorage() {
+      console.log('masuk empty')
+      window.localStorage.removeItem('token')
+      window.localStorage.removeItem('id')
+      window.localStorage.removeItem('email')
+      swal('Signed out', `Goodbye, ${localStorage.name}!`, 'success')
+      window.localStorage.removeItem('name')
+      this.isLoggedIn = false
+      this.page = 'login'
+      this.checkLog()
+    },
+    logout() {
+      this.loginEmail = ''
+      this.loginPassword = ''
+      this.username = ''
+      if (gapi.auth2 != undefined) {
+        var auth2 = gapi.auth2.getAuthInstance()
+        auth2.signOut()
+          .then(() => {
+            this.emptyLocalStorage()
+            this.checkLog()
           })
           .catch(err => {
-            console.log(err)
+            console.log({ err })
           })
       }
-    },
-    created(){
-      if(localStorage.token){
-        console.log('ada local')
-          this.isLogin = true
-      }else if(!localStorage.token){
-        this.homePage = true
-        this.isLogin = false
+      else {
+        this.emptyLocalStorage()
+        this.checkLog()
       }
+    },
+    checkLog() {
+      if (localStorage.token != undefined) {
+        this.page = 'home'
+        this.getMyCVs()
+      } else {
+        this.page = 'register'
+      }
+    },
+    successLogin(data) {
+      window.localStorage.setItem('token', data.token);
+      window.localStorage.setItem('name', data.name);
+      window.localStorage.setItem('email', data.email);
+      window.localStorage.setItem('id', data.id);
+      this.loginUser = {
+        email: '',
+        name: '',
+        password: ''
+      };
+      this.isLoggedIn = true;
+      swal(`Selamat datang ${data.name}!`, ' ', 'success');
+      this.checkLog();
+    },
+    getMyCVs() {
+      axios({
+        method: 'get',
+        url: 'http://localhost:3000/myCVs',
+        headers: {
+          token: localStorage.token
+        }
+      })
+        .then(({data}) => {
+          console.log({data})
+          this.myCVs = data
+        })
+        .catch(err => {
+          console.log({err})
+          swal(err.message)
+        })
     }
-    })
+    // test() {
+    //   this.page = 'register'
+    // }
+  },
+  created() {
+    if (localStorage.token) {
+      console.log('ada local')
+      this.isLogin = true
+    } else if (!localStorage.token) {
+      this.page = 'home'
+      this.isLogin = false
+    }
+    this.checkLog()
+  }
+})
 
 
 function encodeImageFileAsURL(element) {
