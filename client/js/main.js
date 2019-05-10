@@ -16,9 +16,9 @@ const vue = new Vue({
   },
   methods: {
     generateCV() {
-      console.log(this.file)
       let formData = new FormData()
       formData.append('image', this.file)
+      console.log(formData)
       axios({
         method: 'post',
         url: 'http://localhost:3000/upload',
@@ -38,14 +38,15 @@ const vue = new Vue({
       doc.addImage(imgData, 'JPEG', 0, 0, 210, 297)
       doc.addImage(input, 'JPEG', 10, 60, 65, 90)
       doc.setFontSize(25)
-      doc.text(90, 40, 'Work Experience')
+      doc.text(90, 40, 'Work Experienceeeeeeeeeeeeeeeeeeeeeeeeeeeeee')
       doc.text(90, 95, 'Academic History')
       doc.text(90, 157, 'Technical Skills')
       doc.text(90, 215, 'Finished Projects')
       doc.text(90, 270, 'Hobbies')
       doc.setTextColor('#FFFFFF')
       doc.text(25, 225, 'Contacts')
-      doc.text(7, 165, 'Muhammad Yusuf')
+      doc.text(7, 165, 'Muhammad')
+      doc.text(7, 173, 'Yusuf')
       // doc.save('CV-generator.pdf')
       this.file = doc.output('blob')
       console.log({ file: this.file })
