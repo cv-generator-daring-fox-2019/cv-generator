@@ -1,10 +1,15 @@
+const { hash } = require('../helpers/bcryptjs')
+const { compare } = require('../helpers/bcryptjs')
+const { sign } = require('../helpers/jwt')
 const { User } = require('../models')
 
 class ControllerUser {
   static create(req, res) {
     let input = req.body
     let newUser = {
-      // ! ==========================================
+      name : `${req.body.firstName} ${req.body.lastName}`,
+      email : req.body.email,
+      password : req.body.password
     }
     User.create(newUser)
       .then(data => {
@@ -45,8 +50,32 @@ class ControllerUser {
       .catch(err => {res.status(500).json({message: err.message})})
   }
 
-  static login(req,res){
-
+  static login(req, res) {
+    console.log(req.body);
+    let { email, password } = req.body
+    User.findOne({ email: req.body.email })
+      .then(user => {
+        if (!user) {
+          res.status(401).json({ message: 'user tidak ada/ password salah' })
+        } else {
+          if (!compare(req.body.password, user.password)) {
+            res.status(401).json({ message: 'user tidak ada/ password salah' })
+          } else {
+            let obj = {
+              id: user._id,
+            }
+            let token = sign(obj)
+            res.status(201).json({
+              token,
+              id: user._id,
+              email
+            })
+          }
+        }
+      })
+      .catch(err => {
+        res.status(500).json({ err: err.message })
+      })
   }
 }
 
